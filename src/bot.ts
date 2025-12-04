@@ -46,7 +46,14 @@ app.use(express.json());
 const WEBHOOK_PATH = `/webhook/${TOKEN}`;
 
 // mount telegraf webhook callback correctly
-app.use(WEBHOOK_PATH, bot.webhookCallback(WEBHOOK_PATH));
+app.use(
+  WEBHOOK_PATH,
+  (req, res, next) => {
+    console.log("Incoming Telegram update:", req.body);
+    next();
+  },
+  bot.webhookCallback("express")
+);
 
 // health endpoint
 app.get("/", (_req, res) => res.send("T-Git Bot (webhook) alive"));
