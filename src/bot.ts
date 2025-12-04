@@ -55,6 +55,10 @@ app.use(
   bot.webhookCallback("express")
 );
 
+await bot.telegram.setWebhook(
+  "https://t-git.onrender.com/webhook/8247905313:AAGITKih740-ILqw7BmzlqtJzdiM79vCejs"
+);
+
 // health endpoint
 app.get("/", (_req, res) => res.send("T-Git Bot (webhook) alive"));
 
