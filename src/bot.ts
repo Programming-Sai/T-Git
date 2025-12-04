@@ -1,4 +1,3 @@
-// src/bot.ts — webhook mode
 import express from "express";
 import { Telegraf } from "telegraf";
 import dotenv from "dotenv";
@@ -6,75 +5,41 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import startCommand from "./commands/start.js";
-import profileCommand from "./commands/profile.js";
 import reposCommand from "./commands/repos.js";
-import summaryCommand from "./services/summary.js";
 
-const TOKEN = process.env.BOT_TOKEN;
-if (!TOKEN) {
-  console.error("Missing BOT_TOKEN in env — aborting");
-  process.exit(1);
-}
-
+const TOKEN = process.env.BOT_TOKEN!;
 const bot = new Telegraf(TOKEN);
 
-// register commands/handlers
+// Register commands
 startCommand(bot);
-profileCommand(bot);
 reposCommand(bot);
-summaryCommand(bot);
 
-bot.command("miniapp", (ctx) => {
-  ctx.reply("Open Mini App", {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: "Open T-Git Mini App",
-            web_app: { url: `https://513ce3ec168b.ngrok-free.app` },
-          },
-        ],
-      ],
-    },
-  });
-});
-
-// --- WEBHOOK SERVER ---
 const app = express();
 app.use(express.json());
 
 const WEBHOOK_PATH = `/webhook/${TOKEN}`;
+const WEBHOOK_URL = `https://t-git.onrender.com${WEBHOOK_PATH}`;
 
-// mount telegraf webhook callback correctly
-app.use(
-  WEBHOOK_PATH,
-  (req, res, next) => {
-    console.log("Incoming Telegram update:", req.body);
-    next();
-  },
-  bot.webhookCallback("express")
-);
+// Optional logging
+app.use(WEBHOOK_PATH, (req, _res, next) => {
+  console.log("Incoming update:", req.body);
+  next();
+});
 
-await bot.telegram.setWebhook(
-  "https://t-git.onrender.com/webhook/8247905313:AAGITKih740-ILqw7BmzlqtJzdiM79vCejs"
-);
+// Telegram webhook endpoint
+app.post(WEBHOOK_PATH, bot.webhookCallback("express"));
 
-// health endpoint
-app.get("/", (_req, res) => res.send("T-Git Bot (webhook) alive"));
+// Health check
+app.get("/", (_req, res) => res.send("Bot alive"));
 
 const PORT = Number(process.env.PORT || 3000);
-const WEBHOOK_URL =
-  process.env.WEBHOOK_URL || `https://t-git.onrender.com${WEBHOOK_PATH}`;
-
-app.listen(PORT, "0.0.0.0", async () => {
-  console.log(`Webhook server listening on http://0.0.0.0:${PORT}`);
+app.listen(PORT, async () => {
+  console.log(`Server listening on port ${PORT}`);
 
   try {
     await bot.telegram.setWebhook(WEBHOOK_URL);
     console.log("Webhook set to:", WEBHOOK_URL);
   } catch (err) {
-    console.error("Failed to set webhook automatically:", err);
+    console.error("Failed to set webhook:", err);
   }
 });
-
-// no bot.launch() — webhook mode only
