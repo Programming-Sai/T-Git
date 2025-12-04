@@ -75,6 +75,7 @@ app.get("/", (req: Request, res: Response) => {
   res.sendFile(path.resolve(__dirname, "../../dist/miniapp/public/index.html"));
 });
 
-app.listen(4000, () => {
-  console.log("Mini App API running on http://localhost:4000");
+const port = Number(process.env.PORT || 3000);
+app.listen(port, () => {
+  console.log(`Mini App API running on http://0.0.0.0:${port}`);
 });
