@@ -1,10 +1,6 @@
 // src/bot.ts  — webhook mode
 import express from "express";
 import { Telegraf } from "telegraf";
-// import the package object so we can access webhookCallback at runtime
-import * as telegrafPkg from "telegraf";
-// runtime-safe access to webhookCallback (avoids TS typing issues)
-const webhookCallback = (telegrafPkg as any).webhookCallback;
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -48,9 +44,7 @@ const app = express();
 app.use(express.json());
 
 // mount telegraf webhook callback at /webhook/:token
-app.post(`/webhook/${TOKEN}`, (req, res) => {
-  webhookCallback(bot, "http")(req as any, res as any);
-});
+app.post(`/webhook/${TOKEN}`, bot.webhookCallback());
 
 // health endpoint
 app.get("/", (_req, res) => res.send("T-Git Bot (webhook) alive"));
