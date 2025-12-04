@@ -1,6 +1,20 @@
 import { Telegraf, Context } from "telegraf";
 import { getUserRepos } from "../services/github.js";
 
+function escapeHTML(text: string) {
+  return text.replace(/[&<>]/g, (char) => {
+    switch (char) {
+      case "&":
+        return "&amp;";
+      case "<":
+        return "&lt;";
+      case ">":
+        return "&gt;";
+    }
+    return char;
+  });
+}
+
 export default function reposCommand(bot: Telegraf<Context>): void {
   bot.command("repos", async (ctx: Context) => {
     const username = (ctx.message as any)?.text?.split(" ")[1];
@@ -18,18 +32,16 @@ export default function reposCommand(bot: Telegraf<Context>): void {
         return ctx.reply("ℹ️ No public repositories found.");
       }
 
-      let msg = `📦 *Public Repositories for ${username}:*\n\n`;
+      let msg = `<b>📦 Public Repositories for ${escapeHTML(
+        username
+      )}:</b>\n\n`;
 
-      //   repos
-      //     .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
-      //     .forEach((repo) => {
       repos.forEach((repo) => {
-        //   repos.slice(0, 10).forEach((repo) => {
-        msg += `• ${repo.name} ⭐${repo.stargazers_count}\n`;
+        msg += `• ${escapeHTML(repo.name)} ⭐${repo.stargazers_count}\n`;
       });
 
       ctx.reply(msg + `\n\nRepos Count: ${repos.length}`, {
-        parse_mode: "Markdown",
+        parse_mode: "HTML",
       });
     } catch (error) {
       ctx.reply("❗ Unable to fetch repositories.");
