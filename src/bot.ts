@@ -1,4 +1,4 @@
-// src/bot.ts  — webhook mode
+// src/bot.ts — webhook mode
 import express from "express";
 import { Telegraf } from "telegraf";
 import dotenv from "dotenv";
@@ -18,7 +18,7 @@ if (!TOKEN) {
 
 const bot = new Telegraf(TOKEN);
 
-// register commands/handlers (same as before)
+// register commands/handlers
 startCommand(bot);
 profileCommand(bot);
 reposCommand(bot);
@@ -43,29 +43,26 @@ bot.command("miniapp", (ctx) => {
 const app = express();
 app.use(express.json());
 
-// mount telegraf webhook callback at /webhook/:token
-app.post(`/webhook/${TOKEN}`, bot.webhookCallback());
+const WEBHOOK_PATH = `/webhook/${TOKEN}`;
+
+// mount telegraf webhook callback correctly
+app.use(WEBHOOK_PATH, bot.webhookCallback(WEBHOOK_PATH));
 
 // health endpoint
 app.get("/", (_req, res) => res.send("T-Git Bot (webhook) alive"));
 
 const PORT = Number(process.env.PORT || 3000);
 const WEBHOOK_URL =
-  process.env.WEBHOOK_URL || `http://localhost:${PORT}/webhook/${TOKEN}`; // set this to https://<your-host>/webhook/<TOKEN> on Render
+  process.env.WEBHOOK_URL || `https://t-git.onrender.com${WEBHOOK_PATH}`;
 
 app.listen(PORT, "0.0.0.0", async () => {
   console.log(`Webhook server listening on http://0.0.0.0:${PORT}`);
-  if (WEBHOOK_URL) {
-    try {
-      await bot.telegram.setWebhook(WEBHOOK_URL);
-      console.log("Webhook set to:", WEBHOOK_URL);
-    } catch (err) {
-      console.error("Failed to set webhook automatically:", err);
-    }
-  } else {
-    console.log(
-      "WEBHOOK_URL not set — remember to set Telegram webhook to /webhook/<TOKEN>"
-    );
+
+  try {
+    await bot.telegram.setWebhook(WEBHOOK_URL);
+    console.log("Webhook set to:", WEBHOOK_URL);
+  } catch (err) {
+    console.error("Failed to set webhook automatically:", err);
   }
 });
 
