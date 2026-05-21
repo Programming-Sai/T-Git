@@ -11,9 +11,10 @@ if (tg.colorScheme === "dark") {
 }
 async function renderRepos(username) {
   const container = document.getElementById("repo-container");
+  const miniAppUrl = process.env.MINI_APP_URL;
   if (!container) return;
   container.innerHTML = "";
-  const repos = await fetchRepos(username);
+  const repos = await fetchRepos(username, miniAppUrl);
   for (const repo of repos) {
     const div = document.createElement("div");
     div.className = "repo-card";
