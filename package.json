@@ -15,7 +15,7 @@
     "postbuild": "shx mkdir -p dist/miniapp && shx cp -r src/miniapp/public dist/miniapp/",
     "start": "concurrently \"npm run bot:polling\" \"npm run mini\"",
     "start:webhook": "concurrently \"npm run bot:webhook\" \"npm run mini\"",
-    "start:miniapp": "node --loader ts-node/esm src/miniapp/server.ts"
+    "start:miniapp": "npm run build && node dist/miniapp/server.js"
   },
   "keywords": [],
   "author": "",
