@@ -17,29 +17,41 @@ reposCommand(bot);
 const app = express();
 app.use(express.json());
 
-const WEBHOOK_PATH = `/webhook/${TOKEN}`;
-const WEBHOOK_URL = `https://t-git.onrender.com${WEBHOOK_PATH}`;
-
-// Optional logging
-app.use(WEBHOOK_PATH, (req, _res, next) => {
-  console.log("Incoming update:", req.body);
-  next();
-});
-
-// Telegram webhook endpoint
-app.post(WEBHOOK_PATH, bot.webhookCallback("express"));
-
-// Health check
-app.get("/", (_req, res) => res.send("Bot alive"));
-
 const PORT = Number(process.env.PORT || 3000);
-app.listen(PORT, async () => {
-  console.log(`Server listening on port ${PORT}`);
+const USE_WEBHOOK = process.env.USE_WEBHOOK === "true";
+console.log("Using Webhook?: ", USE_WEBHOOK);
+if (USE_WEBHOOK) {
+  // Webhook mode (for production with public URL)
+  const WEBHOOK_PATH = `/webhook/${TOKEN}`;
+  const WEBHOOK_URL = process.env.WEBHOOK_URL!; // e.g., https://your-domain.com
 
-  try {
-    await bot.telegram.setWebhook(WEBHOOK_URL);
-    console.log("Webhook set to:", WEBHOOK_URL);
-  } catch (err) {
-    console.error("Failed to set webhook:", err);
-  }
-});
+  app.use(WEBHOOK_PATH, (req, _res, next) => {
+    console.log("Incoming webhook update:", req.body);
+    next();
+  });
+
+  app.post(WEBHOOK_PATH, bot.webhookCallback("express"));
+
+  app.listen(PORT, async () => {
+    console.log(`Webhook server listening on port ${PORT}`);
+    try {
+      await bot.telegram.setWebhook(`${WEBHOOK_URL}${WEBHOOK_PATH}`);
+      console.log("Webhook set to:", `${WEBHOOK_URL}${WEBHOOK_PATH}`);
+    } catch (err) {
+      console.error("Failed to set webhook:", err);
+    }
+  });
+} else {
+  // Long polling mode (for local dev or simpler deployment)
+  app.get("/", (_req, res) => res.send("Bot is running (long polling mode)"));
+  app.listen(PORT, () => console.log(`Health check on port ${PORT}`));
+
+  bot
+    .launch()
+    .then(() => console.log("Bot started with long polling"))
+    .catch((err) => console.error("Bot failed to start:", err));
+
+  // Graceful stop for long polling
+  process.once("SIGINT", () => bot.stop("SIGINT"));
+  process.once("SIGTERM", () => bot.stop("SIGTERM"));
+}

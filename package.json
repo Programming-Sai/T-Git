@@ -5,7 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --exec \"node --loader ts-node/esm\" src/bot.ts",
+    "bot": "nodemon --exec \"node --loader ts-node/esm\" src/bot.ts",
+    "bot:polling": "cross-env USE_WEBHOOK=false nodemon --exec \"node --loader ts-node/esm\" src/bot.ts",
+    "bot:webhook": "cross-env USE_WEBHOOK=true nodemon --exec \"node --loader ts-node/esm\" src/bot.ts",
+    "mini": "nodemon --exec \"node --loader ts-node/esm\" src/miniapp/server.ts",
+    "dev": "concurrently \"npm run bot:polling\" \"npm run mini\"",
+    "dev:webhook": "concurrently \"npm run bot:webhook\" \"npm run mini\"",
+    "build": "tsc",
+    "start": "concurrently \"npm run bot:polling\" \"npm run mini\"",
+    "start:webhook": "concurrently \"npm run bot:webhook\" \"npm run mini\"",
     "mini": "nodemon --exec \"node --loader ts-node/esm\" src/miniapp/server.ts"
   },
   "keywords": [],
@@ -24,6 +32,8 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^24.10.1",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
     "nodemon": "^3.0.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
