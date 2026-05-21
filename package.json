@@ -12,7 +12,7 @@
     "dev": "concurrently \"npm run bot:polling\" \"npm run mini\"",
     "dev:webhook": "concurrently \"npm run bot:webhook\" \"npm run mini\"",
     "build": "tsc",
-    // "postbuild": "shx mkdir -p dist/miniapp && shx cp -r src/miniapp/public dist/miniapp/",
+    "postbuild": "shx mkdir -p dist/miniapp && shx cp -r src/miniapp/public dist/miniapp/public",
     "start": "concurrently \"npm run bot:polling\" \"npm run mini\"",
     "start:webhook": "concurrently \"npm run bot:webhook\" \"npm run mini\"",
     "start:miniapp": "npm run build && node dist/miniapp/server.js"
