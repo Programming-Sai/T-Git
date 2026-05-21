@@ -11,7 +11,8 @@
     "mini": "nodemon --exec \"node --loader ts-node/esm\" src/miniapp/server.ts",
     "dev": "concurrently \"npm run bot:polling\" \"npm run mini\"",
     "dev:webhook": "concurrently \"npm run bot:webhook\" \"npm run mini\"",
-    "build": "tsc && shx cp -r src/miniapp/public dist/miniapp/",
+    "build": "tsc",
+    "postbuild": "mkdir -p dist/miniapp && cp -r src/miniapp/public dist/miniapp/",
     "start": "concurrently \"npm run bot:polling\" \"npm run mini\"",
     "start:webhook": "concurrently \"npm run bot:webhook\" \"npm run mini\"",
     "start:miniapp": "npm run build && node dist/miniapp/server.js"

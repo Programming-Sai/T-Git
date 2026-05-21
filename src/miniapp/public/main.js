@@ -1,5 +1,6 @@
 import { fetchRepos, fetchSummary } from "./api.js";
 const tg = window.Telegram.WebApp;
+console.log(process.env.MINI_APP_URL);
 tg.expand();
 // Set Telegram theme dynamically
 if (tg.colorScheme === "dark") {

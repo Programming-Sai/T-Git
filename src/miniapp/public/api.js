@@ -1,4 +1,5 @@
 export async function fetchRepos(username, miniAppUrl) {
+  console.log("fetching from: ", miniAppUrl);
   const res = await fetch(`${miniAppUrl}/api/repos?username=${username}`);
   return res.json();
 }
