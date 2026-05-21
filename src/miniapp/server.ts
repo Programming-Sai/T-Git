@@ -44,7 +44,7 @@ app.get(
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
       res.status(500).json({ error: errorMessage });
     }
-  }
+  },
 );
 
 // Fetch summary
@@ -67,7 +67,7 @@ app.get(
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
       res.status(500).json({ error: errorMessage });
     }
-  }
+  },
 );
 
 // Serve index.html for root path and all non-API routes
@@ -75,7 +75,8 @@ app.get("/", (req: Request, res: Response) => {
   res.sendFile(path.resolve(__dirname, "../../dist/miniapp/public/index.html"));
 });
 
-const port = Number(process.env.PORT || 3000) + 1000;
+const port =
+  Number(process.env.PORT || 3000) + (process.env.NODE_ENV == "dev" ? 1000 : 0);
 app.listen(port, () => {
   console.log(`Mini App API running on http://0.0.0.0:${port}`);
 });
