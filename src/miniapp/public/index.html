@@ -1,14 +1,154 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>T-Git Mini App</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="theme-color" content="#0F0F0F" />
+    <title>T-Git — GitHub Assistant</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <h1>T-Git</h1>
-    <div id="repo-container"></div>
+    <!-- Main Container -->
+    <div class="app-container">
+      <!-- Header -->
+      <header class="app-header">
+        <div class="header-content">
+          <div class="logo">
+            <i class="fab fa-github"></i>
+            <h1>T-Git</h1>
+          </div>
+          <p class="subtitle">Your GitHub Assistant</p>
+        </div>
+      </header>
+
+      <!-- Search Section -->
+      <section class="search-section" id="searchSection">
+        <div class="search-container">
+          <div class="input-group">
+            <i class="fab fa-github input-icon"></i>
+            <input
+              type="text"
+              id="usernameInput"
+              placeholder="Enter GitHub username..."
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <button class="clear-btn" id="clearBtn" style="display: none">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <button class="search-btn" id="searchBtn">
+            <span class="btn-text">Fetch Repos</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+        <div class="error-message" id="errorMessage"></div>
+      </section>
+
+      <!-- Results Section -->
+      <section
+        class="results-section"
+        id="resultsSection"
+        style="display: none"
+      >
+        <div class="results-header">
+          <div class="user-info" id="userInfo"></div>
+          <button class="new-search-btn" id="newSearchBtn">
+            <i class="fas fa-search"></i>
+            New Search
+          </button>
+        </div>
+
+        <!-- Repo Grid -->
+        <div class="repo-grid" id="repoContainer"></div>
+      </section>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">
+          <i class="fab fa-github"></i>
+        </div>
+        <h2>Discover GitHub Repositories</h2>
+        <p>
+          Enter a GitHub username to explore repositories and get AI-powered
+          insights
+        </p>
+        <div class="feature-list">
+          <div class="feature-item">
+            <i class="fas fa-star"></i>
+            <span>View repository details</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-robot"></i>
+            <span>Ask AI questions</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-code"></i>
+            <span>Explore code insights</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Modal -->
+    <div class="modal" id="aiModal">
+      <div class="modal-backdrop" id="modalBackdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modalTitle">Ask AI</h3>
+          <button class="modal-close" id="modalClose">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="input-group">
+            <i class="fas fa-question-circle input-icon"></i>
+            <textarea
+              id="aiQuestion"
+              placeholder="What would you like to know about this repository?"
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="ai-response" id="aiResponse" style="display: none">
+            <div class="response-header">
+              <i class="fas fa-robot"></i>
+              <span>AI Response</span>
+            </div>
+            <div class="response-content" id="responseContent"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" id="cancelBtn">Cancel</button>
+          <button class="btn-primary" id="submitQuestion">
+            <span class="btn-text">Ask AI</span>
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p id="loadingText">Fetching repositories...</p>
+      </div>
+    </div>
+
     <script type="module" src="./main.js"></script>
   </body>
 </html>
