@@ -138,13 +138,12 @@ function createSkeletonCard() {
 function createRepoCard(repo, username) {
   const card = document.createElement("div");
   card.className = "repo-card";
-
   const description = repo.description || "No description available";
   const stars = formatNumber(repo.stargazers_count || 0);
 
   card.innerHTML = `
     <h2>
-      <span class="repo-name">${repo.name}</span>
+      <span>${repo.name}</span>
       <span class="star-count">
         <i class="fas fa-star"></i>
         ${stars}
@@ -160,6 +159,12 @@ function createRepoCard(repo, username) {
         <i class="fas fa-robot"></i>
         Ask AI
       </button>
+      <a href='https://github.com/${username}/${repo.name}' id="btn-${repo.name}">
+        <button class=".btn-tertiary">  
+          <i class="fas fa-link"></i>
+          View Repo
+        </button>
+      </a>
     </div>
   `;
 
@@ -215,7 +220,6 @@ async function renderRepos(username) {
     repos.forEach((repo) => {
       const card = createRepoCard(repo, username);
       elements.repoContainer.appendChild(card);
-
       // Load summary asynchronously
       const summaryElement = document.getElementById(`summary-${repo.name}`);
       const buttonElement = document.getElementById(`btn-${repo.name}`);

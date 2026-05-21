@@ -296,8 +296,14 @@ body {
   color: var(--accent-primary);
 }
 
+a {
+  color: white;
+  text-decoration: none;
+}
+
 .new-search-btn,
-.btn-secondary {
+.btn-secondary,
+.btn-tertiary {
   padding: var(--spacing-sm) var(--spacing-md);
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
@@ -310,16 +316,24 @@ body {
   align-items: center;
   gap: var(--spacing-xs);
   transition: all 0.2s ease;
+  text-align: center;
+}
+
+.btn-tertiary {
+  background: transparent;
+  border: 2px solid var(--bg-tertiary);
 }
 
 .new-search-btn:hover,
-.btn-secondary:hover {
+.btn-secondary:hover,
+.btn-tertiary:hover {
   background: var(--bg-card-hover);
   transform: translateY(-1px);
 }
 
 .new-search-btn:active,
-.btn-secondary:active {
+.btn-secondary:active,
+.btn-tertiary:active {
   transform: translateY(0);
 }
 
