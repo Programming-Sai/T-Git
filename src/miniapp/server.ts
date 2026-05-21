@@ -78,5 +78,5 @@ app.get("/", (req: Request, res: Response) => {
 const port =
   Number(process.env.PORT || 3000) + (process.env.NODE_ENV == "dev" ? 1000 : 0);
 app.listen(port, () => {
-  console.log(`Mini App API running on http://0.0.0.0:${port}`);
+  console.log("Mini App is running on ", process.env.MINI_APP_URL);
 });
